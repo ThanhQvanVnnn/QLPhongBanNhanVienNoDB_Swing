@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -25,16 +26,20 @@ public class UiFromPhongBan extends javax.swing.JFrame {
     
     private int position = -1  ;
     private DefaultTableModel modelPhongBanTable;
+    private DefaultTableModel modelNhanVienTable;
     private int idMax;
+    private PhongBan phongban;
     /**
      * Creates new form UiFromPhongBan
      */
     public UiFromPhongBan() {
         initComponents();
         this.modelPhongBanTable = (DefaultTableModel) jTable_BangPhongBan.getModel();
+        this.modelNhanVienTable = (DefaultTableModel) jTable_BangHienThi.getModel();
         hienThiDSPhongBan();
     }
     public void hienThiDSPhongBan(){
+        modelPhongBanTable.setRowCount(0);
         if(Data.phongbanList.size()!=0){
         this.idMax = Data.phongbanList.get(0).getMaPhongBan();
         for(PhongBan phongban:Data.phongbanList){
@@ -45,6 +50,8 @@ public class UiFromPhongBan extends javax.swing.JFrame {
             if(idMax<phongban.getMaPhongBan()) idMax = phongban.getMaPhongBan();
         }
         }
+        jLabel_MaPhongBan.setText("");
+        jTextField_TenPhongBan.setText("");
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -137,8 +144,18 @@ public class UiFromPhongBan extends javax.swing.JFrame {
         });
 
         jButton_XoaPhongBan.setText("Xóa Phòng Ban");
+        jButton_XoaPhongBan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_XoaPhongBanActionPerformed(evt);
+            }
+        });
 
         jButton_SuaPhongBan.setText("Sửa Phòng Ban");
+        jButton_SuaPhongBan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_SuaPhongBanActionPerformed(evt);
+            }
+        });
 
         jButton_nhayQuanNhanVien.setText("Nhảy Qua Nhân Viên");
         jButton_nhayQuanNhanVien.addActionListener(new java.awt.event.ActionListener() {
@@ -228,6 +245,9 @@ public class UiFromPhongBan extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_nhayQuanNhanVienActionPerformed
 
     private void jButton_ThemPhongBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ThemPhongBanActionPerformed
+       if(jTextField_TenPhongBan.getText().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên phòng ban");
+       }else{
         int maPBAdd = idMax + 1;
         String tenPBAdd = jTextField_TenPhongBan.getText();
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -248,13 +268,51 @@ public class UiFromPhongBan extends javax.swing.JFrame {
         } catch (ParseException ex) {
             Logger.getLogger(UiFromPhongBan.class.getName()).log(Level.SEVERE, null, ex);
         }
+       }
       
     }//GEN-LAST:event_jButton_ThemPhongBanActionPerformed
 
     private void jTable_BangPhongBanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_BangPhongBanMouseClicked
         this.position = jTable_BangPhongBan.getSelectedRow();
+        phongban = Data.phongbanList.get(this.position);
+       jLabel_MaPhongBan.setText(phongban.getMaPhongBan()+"");
+       jTextField_TenPhongBan.setText(phongban.getTenPhongBan());
+        hienThiTable(phongban);
     }//GEN-LAST:event_jTable_BangPhongBanMouseClicked
 
+    private void jButton_XoaPhongBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_XoaPhongBanActionPerformed
+          if(this.position< 0){
+             JOptionPane.showMessageDialog(this, "Vui chọn phòng ban");
+        }else{
+        Data.phongbanList.remove(this.position);
+        hienThiDSPhongBan();
+        modelNhanVienTable.setRowCount(0);
+          }
+    }//GEN-LAST:event_jButton_XoaPhongBanActionPerformed
+
+    private void jButton_SuaPhongBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_SuaPhongBanActionPerformed
+           Data.phongbanList.get(this.position).setTenPhongBan(jTextField_TenPhongBan.getText());
+           hienThiDSPhongBan();
+    }//GEN-LAST:event_jButton_SuaPhongBanActionPerformed
+
+    private void hienThiTable(PhongBan phongban){
+        modelNhanVienTable.setRowCount(0);
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+       for(NhanVien nhanvien:phongban.getDsNhanVien()){
+           modelNhanVienTable.addRow(new Object[]{
+               nhanvien.getMaNhanVien(),
+               nhanvien.getTenNhanVien(),
+               nhanvien.getGioiTinhString(),
+               nhanvien.getSoCMND(),
+               nhanvien.getLuongCoBan(),
+               dateFormat.format(nhanvien.getNgayVaoLam()),
+               nhanvien.getSoNgayLamViec(),
+               nhanvien.getSoThichString(),
+              phongban.getTenPhongBan()
+           });
+           if(idMax<nhanvien.getMaNhanVien()) idMax = nhanvien.getMaNhanVien();
+       }
+    }
     /**
      * @param args the command line arguments
      */

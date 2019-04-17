@@ -210,11 +210,17 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="X&#xf3;a Ph&#xf2;ng Ban"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_XoaPhongBanActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton_SuaPhongBan">
       <Properties>
         <Property name="text" type="java.lang.String" value="S&#x1eed;a Ph&#xf2;ng Ban"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_SuaPhongBanActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton_nhayQuanNhanVien">
       <Properties>

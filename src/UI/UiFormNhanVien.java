@@ -10,9 +10,13 @@ import Object.NhanVien;
 import Object.PhongBan;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,6 +28,8 @@ public class UiFormNhanVien extends javax.swing.JFrame {
     private DefaultTableModel tableModel;
     private int idMax;
     private int vitriPhongBan;
+    private NhanVien nhanvien = null;
+    private int selection=-1;
     /**
      * Creates new form UiFormNhanVien
      */
@@ -37,6 +43,7 @@ public class UiFormNhanVien extends javax.swing.JFrame {
     }
     private void hienThiTable(){
         idMax = nhanVienList.get(0).getMaNhanVien();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
        for(NhanVien nhanvien:nhanVienList){
            tableModel.addRow(new Object[]{
                nhanvien.getMaNhanVien(),
@@ -44,13 +51,17 @@ public class UiFormNhanVien extends javax.swing.JFrame {
                nhanvien.getGioiTinhString(),
                nhanvien.getSoCMND(),
                nhanvien.getLuongCoBan(),
-               nhanvien.getNgayVaoLam().toString(),
+               dateFormat.format(nhanvien.getNgayVaoLam()),
                nhanvien.getSoNgayLamViec(),
                nhanvien.getSoThichString(),
                Data.phongbanList.get(this.vitriPhongBan).getTenPhongBan()
            });
            if(idMax<nhanvien.getMaNhanVien()) idMax = nhanvien.getMaNhanVien();
        }
+       jTextField_TenNhanVien.setText("");
+       jTextField_CMND.setText("");
+       jTextField_LuongCoBan.setText("");
+       jList_SoThich.clearSelection();
     }
 
     /**
@@ -141,6 +152,7 @@ public class UiFormNhanVien extends javax.swing.JFrame {
         jLabel3.setText("Giới tính:");
 
         buttonGroup_GioiTinh.add(jRadioButton_Nam);
+        jRadioButton_Nam.setSelected(true);
         jRadioButton_Nam.setText("Nam");
         jRadioButton_Nam.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -177,6 +189,7 @@ public class UiFormNhanVien extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        jList_SoThich.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(jList_SoThich);
 
         jTable_BangHienThi.setModel(new javax.swing.table.DefaultTableModel(
@@ -195,6 +208,11 @@ public class UiFormNhanVien extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jTable_BangHienThi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_BangHienThiMouseClicked(evt);
+            }
+        });
         jScrollPane5.setViewportView(jTable_BangHienThi);
 
         jButton_Them.setText("Thêm Nhân Viên");
@@ -205,6 +223,11 @@ public class UiFormNhanVien extends javax.swing.JFrame {
         });
 
         jButton_Xoa.setText("Xóa Nhân Viên");
+        jButton_Xoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_XoaActionPerformed(evt);
+            }
+        });
 
         jButton_Sua.setText("Sửa Nhân Viên");
         jButton_Sua.addActionListener(new java.awt.event.ActionListener() {
@@ -233,35 +256,6 @@ public class UiFormNhanVien extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField_CMND)
-                            .addComponent(jTextField_LuongCoBan)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField_TenNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jDateChooser_NgayVaoLam, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addContainerGap(333, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jRadioButton_Nam)
-                                .addGap(18, 18, 18)
-                                .addComponent(jRadioButton_Nu)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(24, 24, 24))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane5)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
@@ -281,37 +275,67 @@ public class UiFormNhanVien extends javax.swing.JFrame {
                         .addComponent(jButton_Sua, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52))))
+                        .addGap(52, 52, 52))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField_CMND)
+                            .addComponent(jTextField_LuongCoBan)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField_TenNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jDateChooser_NgayVaoLam, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jRadioButton_Nam)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jRadioButton_Nu)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(24, 24, 24))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel_MaSo, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(17, 17, 17)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jRadioButton_Nam)
+                    .addComponent(jRadioButton_Nu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField_TenNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField_CMND, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel_MaSo, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(17, 17, 17)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jRadioButton_Nam)
-                            .addComponent(jRadioButton_Nu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField_TenNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jTextField_CMND, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(jTextField_LuongCoBan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(137, Short.MAX_VALUE)
+                        .addGap(7, 7, 7)
                         .addComponent(jDateChooser_NgayVaoLam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(31, 31, 31)
@@ -345,7 +369,33 @@ public class UiFormNhanVien extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton_NuActionPerformed
 
     private void jButton_SuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_SuaActionPerformed
-        // TODO add your handling code here:
+        if(jTextField_TenNhanVien.getText().isEmpty() || jTextField_LuongCoBan.getText().isEmpty() 
+                || jTextField_CMND.getText().isEmpty() ){
+            JOptionPane.showMessageDialog(this, "Vui lòng không bỏ trống");
+        }else{
+            int maNhanVienAdd = nhanvien.getMaNhanVien();
+        String tenNhanVienAdd = jTextField_TenNhanVien.getText();
+        float luongCoBanAdd = Float.parseFloat(jTextField_LuongCoBan.getText());
+        int cmndAdd = Integer.parseInt(jTextField_CMND.getText());
+        int soNgayLamViecAdd = 0;
+        Boolean gioiTinhAdd = (jRadioButton_Nam.isSelected() == true)? true:false;
+       
+             List<String> soThichAdd = jList_SoThich.getSelectedValuesList();
+               if(soThichAdd.size()==0){
+                    soThichAdd = new ArrayList<>();
+                    soThichAdd.add("");
+               }
+        Date ngayVaoLamAdd = jDateChooser_NgayVaoLam.getDate();
+        
+               NhanVien nhanvien = new NhanVien(maNhanVienAdd,tenNhanVienAdd,gioiTinhAdd,cmndAdd
+                ,ngayVaoLamAdd,luongCoBanAdd,soNgayLamViecAdd, (ArrayList<String>) soThichAdd,Data.phongbanList.get(this.vitriPhongBan).getMaPhongBan());
+        PhongBan phongban = Data.phongbanList.get(this.vitriPhongBan);
+          phongban.getDsNhanVien().remove(selection);
+         phongban.getDsNhanVien().add(selection, nhanvien);
+        
+         tableModel.setRowCount(0);
+         hienThiTable();
+        }
     }//GEN-LAST:event_jButton_SuaActionPerformed
 
     private void jRadioButton_NamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton_NamActionPerformed
@@ -353,27 +403,62 @@ public class UiFormNhanVien extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton_NamActionPerformed
 
     private void jButton_ThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ThemActionPerformed
-        int maNhanVienAdd = idMax + 1;
+        if(jTextField_TenNhanVien.getText().isEmpty() || jTextField_LuongCoBan.getText().isEmpty() 
+                || jTextField_CMND.getText().isEmpty() ){
+            JOptionPane.showMessageDialog(this, "Vui lòng không bỏ trống");
+        }else{
+            int maNhanVienAdd = idMax + 1;
         String tenNhanVienAdd = jTextField_TenNhanVien.getText();
         float luongCoBanAdd = Float.parseFloat(jTextField_LuongCoBan.getText());
         int cmndAdd = Integer.parseInt(jTextField_CMND.getText());
         int soNgayLamViecAdd = 0;
         Boolean gioiTinhAdd = (jRadioButton_Nam.isSelected() == true)? true:false;
-        ArrayList<String> soThichAdd = new ArrayList<>();
-               soThichAdd = (ArrayList<String>) jList_SoThich.getSelectedValuesList();
+       
+             List<String> soThichAdd = jList_SoThich.getSelectedValuesList();
+               if(soThichAdd.size()==0){
+                    soThichAdd = new ArrayList<>();
+                    soThichAdd.add("");
+               }
         Date ngayVaoLamAdd = jDateChooser_NgayVaoLam.getDate();
         NhanVien nhanvien = new NhanVien(maNhanVienAdd,tenNhanVienAdd,gioiTinhAdd,cmndAdd
-                ,ngayVaoLamAdd,luongCoBanAdd,soNgayLamViecAdd,soThichAdd
-                ,Data.phongbanList.get(this.vitriPhongBan).getMaPhongBan());
+                ,ngayVaoLamAdd,luongCoBanAdd,soNgayLamViecAdd, (ArrayList<String>) soThichAdd,Data.phongbanList.get(this.vitriPhongBan).getMaPhongBan());
         PhongBan phongban = Data.phongbanList.get(this.vitriPhongBan);
          phongban.getDsNhanVien().add(nhanvien);
          tableModel.setRowCount(0);
          hienThiTable();
+        }
     }//GEN-LAST:event_jButton_ThemActionPerformed
 
     private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
        
     }//GEN-LAST:event_formMouseExited
+
+    private void jButton_XoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_XoaActionPerformed
+        if(jTable_BangHienThi.getSelectionModel().isSelectionEmpty()){
+            JOptionPane.showMessageDialog(this, "vui lòng chọn nhân viên cần xóa");
+        }else{
+            nhanVienList.remove(selection);
+            tableModel.setRowCount(0);
+            hienThiTable();
+        }
+    }//GEN-LAST:event_jButton_XoaActionPerformed
+
+    private void jTable_BangHienThiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_BangHienThiMouseClicked
+      selection = jTable_BangHienThi.getSelectedRow();
+      nhanvien = nhanVienList.get(selection);
+      jTextField_TenNhanVien.setText(nhanvien.getTenNhanVien());
+      jTextField_LuongCoBan.setText(nhanvien.getLuongCoBan()+"");
+      jTextField_CMND.setText(nhanvien.getSoCMND()+"");
+      if(nhanvien.getGioiTinh()){
+          jRadioButton_Nam.setSelected(true);
+          jRadioButton_Nu.setSelected(false);
+      }else {
+          jRadioButton_Nam.setSelected(false);
+          jRadioButton_Nu.setSelected(true);
+      }
+      jDateChooser_NgayVaoLam.setDate(nhanvien.getNgayVaoLam());
+      jLabel_MaSo.setText(nhanvien.getMaNhanVien()+"");
+    }//GEN-LAST:event_jTable_BangHienThiMouseClicked
 
    
     /**

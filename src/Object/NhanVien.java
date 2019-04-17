@@ -112,9 +112,10 @@ public class NhanVien {
     public String getSoThichString(){
        String soThich = "";
        for(String s:this.soThich){
-           soThich += s +",";
+           soThich += ","+ s ;
        }
-       return soThich;
+       
+       return soThich.substring(1);
     }
 
     public void setLuongCoBan(float luongCoBan) {
